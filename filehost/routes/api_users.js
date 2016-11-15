@@ -2,10 +2,8 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var UserModel = require('../user_model').UserModel;
-var crypto = require('crypto');
 var mongo_path = 'mongodb://localhost/course_work';
 mongoose.connect(mongo_path);
-
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   UserModel.find((err, users) => {
