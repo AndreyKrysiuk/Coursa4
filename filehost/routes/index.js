@@ -107,8 +107,82 @@ router.get('/profile', (req, res) => {
 	}
 });
 
+var avatarPath;
+router.post('/uploadAvatar', function(req, res, next) {
+
+	var form = new multiparty.Form();
+	var uploadFile = {uploadPath: '', type: '', size: 0};
+	var maxSize = 2 * 1024 * 1024; //2MB
+	var supportMimeTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
+	var errors = [];
+
+	form.on('error', function(err){
+			if(fs.existsSync(uploadFile.path)) {
+					fs.unlinkSync(uploadFile.path);
+					console.log('error');
+			}
+	});
+
+	form.on('close', function() {
+			if(errors.length == 0) {
+					res.send({status: 'ok', text: 'Success'});
+			}
+			else {
+					if(fs.existsSync(uploadFile.path)) {
+							fs.unlinkSync(uploadFile.path);
+					}
+					res.send({status: 'bad', errors: errors});
+			}
+	});
+	// listen on part event for image file
+	form.on('part', function(part) {
+			uploadFile.size = part.byteCount;
+			uploadFile.type = part.headers['content-type'];
+			if(req.user){
+				uploadFile.path = './files/' + req.user._id + '/' + part.filename;
+				if (!fs.existsSync('./files/' + req.user._id + '/')){
+						mkdirp('./files/' +  req.user._id + '/', function (err) {
+								if (err) console.error(err);
+								else console.log('dir created');
+						});
+				}
+			} else {
+				uploadFile.path = './files/' + part.filename;
+				if (!fs.existsSync('./files/')){
+						mkdirp('./files/', function (err) {
+								if (err) console.error(err);
+								else console.log('dir created');
+						});
+				}
+			}
+			avatarPath = uploadFile.path;
+			if(uploadFile.size > maxSize) {
+					errors.push('File size is ' + uploadFile.size / 1024 / 1024 + '. Limit is' + (maxSize / 1024 / 1024) + 'MB.');
+			}
+
+			if(supportMimeTypes.indexOf(uploadFile.type) == -1) {
+					errors.push('Unsupported mimetype ' + uploadFile.type);
+			}
+
+			if(errors.length == 0) {
+					var out = fs.createWriteStream(uploadFile.path);
+					part.pipe(out);
+			}
+			else {
+					part.resume();
+			}
+	});
+	form.parse(req);
+});
+
+
+
 router.get('/create_post', (req, res) => {
+	if(req.user)
 		res.render('create_post');
+		else {
+			res.redirect('/register');
+		}
 });
 
 router.post('/register', (req, res) => {
@@ -118,7 +192,7 @@ router.post('/register', (req, res) => {
       username : req.body.username,
       email : req.body.email,
       password : hash(req.body.password),
-      image : "blablabla"
+      image : avatarPath
       });
       new_user.save((err) => {
         if(!err){

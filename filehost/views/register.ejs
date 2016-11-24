@@ -44,14 +44,20 @@
       <input type='password' name='password2' />
     <br/>
     Load Avatar:<br />
-    <input type='file' name='avatar' id='avatar')/>
+    <input type='file' style='display: none'  name='uploadFiles' id='uploadFiles'></input>
+    <button type="button" class="btn btn-primary" id = "addFilesButton">Add Files</button>
+    <button type="button" class="btn btn-primary" id = "uploadAllFilesButton">Upload</button>
+    <table id='files'></table>
     <br />
 
     <br /><br />
 			<input type="submit" value='Registration' />
 		</form>
 	</div>
-  <script src="js/image.upload.js"></script>
+  <script src="https://code.jquery.com/jquery-3.1.1.js"
+  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+  crossorigin="anonymous"></script>
+  <script src="../js/image.upload.js"></script>
 </body>
 </html>
 </html>
