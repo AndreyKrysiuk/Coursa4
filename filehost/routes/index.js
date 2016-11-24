@@ -4,6 +4,10 @@ var mongoose = require('mongoose');
 var mpromise = require('mpromise');
 var crypto = require('crypto');
 var UserModel = require('../user_model').UserModel;
+var PostModel = require('../posts_model').PostModel;
+
+var fs = require("fs");
+var multiparty = require('multiparty');
 
 const bodyParser = require('body-parser');
 const busboyBodyParser = require('busboy-body-parser');
@@ -72,8 +76,7 @@ function hash(pass){
 }
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	if(req.user) res.render('main_s');
-	else res.render('main');
+	 res.render('main', {user : req.user});
 });
 
 router.get('/register', (req, res) => {
@@ -93,7 +96,7 @@ router.post('/login',
 	passport.authenticate('local', { failureRedirect: '/login-error' }),
   (req, res) => res.redirect('/'));
 
-router.get('/login-error', (req, res) => res.render('error', {error : 'Login error'}));
+router.get('/login-error', (req, res) => res.render('error', {error : 'Login error',  user : req.user}));
 
 
 router.get('/profile', (req, res) => {
@@ -104,16 +107,18 @@ router.get('/profile', (req, res) => {
 	}
 });
 
+router.get('/create_post', (req, res) => {
+		res.render('create_post');
+});
 
 router.post('/register', (req, res) => {
   if(req.body.password === req.body.password2){
-	  var avaObj = req.files.avatar;
-	  var base64String = avaObj.data.toString('base64');
+
     var new_user = new UserModel({
       username : req.body.username,
       email : req.body.email,
       password : hash(req.body.password),
-      image : base64String
+      image : "blablabla"
       });
       new_user.save((err) => {
         if(!err){
@@ -121,14 +126,14 @@ router.post('/register', (req, res) => {
         } else {
           console.log(err);
           if(err.name == 'ValidationError') {
-                  res.render('error', {error : '400. Validation error'});
+                  res.render('error', {error : '400. Validation error', user: req.user,});
                } else {
-                   res.render('error', {error : '500. Server error'});
+                   res.render('error', {error : '500. Server error', user: req.user,});
                }
         }
       });
     } else {
-      res.render('error', { error : 'Password is not correct. Repeat password correctly'});
+      res.render('error', {error : 'Password is not correct. Repeat password correctly',  user : req.user,});
     }
 });
 module.exports = router;

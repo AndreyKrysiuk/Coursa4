@@ -15,13 +15,19 @@
   <div class='container'>
     <h1>Welcome!</h1>
     <p>
+      <a href = '/'>Main</a>
       <a href = '/games'>Games</a>
       <a href = '/videos'>Videos</a>
       <a href = '/audios'>Audio</a>
       <a href = '/texts'>Texts</a>
       <a href = '/images'>Images</a>
       <a href = '/software'>Software</a>
-      <a href = '/login'>Login</a>
+      <% if (!user) { %>
+                    <a href = '/login'>Login</a>
+                <% } else { %>
+                    <a href = '/logout'>Logout</a>
+                    <a href = '/profile'>Profile</a>
+                <% } %>
     </p>
   </div>
 </body>

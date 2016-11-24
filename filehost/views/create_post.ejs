@@ -21,34 +21,27 @@
   <a href = '/texts'>Texts</a>
   <a href = '/images'>Images</a>
   <a href = '/software'>Software</a>
-  <a href = '/login'>Login</a>
+  <a href = '/logout'>Logout</a>
 </p>
 <body>
 	<div class='container'>
-		<h1>Registration</h1>
-		<form action='/register' method='POST' enctype="multipart/form-data">
-			Username:
+		<h1>Create your post</h1>
+		<form action='/create_post' method='POST' enctype="multipart/form-data">
+		  Title:
       <br/>
-			<input type='text' name='username' />
+			<input type='text' name='title' />
 			<br/>
-      E-mail:
+      Description:
       <br/>
-      <input type='text' name='email' />
+      <input type='text' name='description' size = 100/>
     <br/>
-			Password:
-      <br/>
-			<input type='password' name='password' />
-			<br/>
-      Repeat password:
-      <br/>
-      <input type='password' name='password2' />
-    <br/>
-    Load Avatar:<br />
-    <input type='file' name='avatar' id='avatar')/>
+    Load Files:<br />
+    <input type='file' style='display: none' name='uploadFiles' id='uploadFiles' multiple>
+    <button id='addFilesButton'>Add Files</button>
+    <button id='uploadAllFilesButton'>Upload Files</button>
     <br />
-
     <br /><br />
-			<input type="submit" value='Registration' />
+			<input type="submit" value='Create' />
 		</form>
 	</div>
   <script src="js/image.upload.js"></script>

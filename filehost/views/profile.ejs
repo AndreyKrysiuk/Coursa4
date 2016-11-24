@@ -13,17 +13,17 @@
 
 <body>
   <div class='container'>
-    <h1>Welcome!</h1>
     <p>
+      <a href = '/'>Main</a>
       <a href = '/games'>Games</a>
       <a href = '/videos'>Videos</a>
       <a href = '/audios'>Audio</a>
       <a href = '/texts'>Texts</a>
       <a href = '/images'>Images</a>
       <a href = '/software'>Software</a>
-      <a href = '/login'>Logout</a>
+      <a href = '/logout'>Logout</a>
       <br /><br />
-      <form action='/register' method='POST'>
+      <form action='/update' method='POST'>
         <p>
           Username : <%= user.username%>
         </p>
@@ -34,25 +34,33 @@
       <br/>
   			Password:
         <br/>
-  			<input type='password' name='password' />
+  			<input type='password' name='password' value = '<%user.password%>'/>
   			<br/>
         Repeat password:
         <br/>
-        <input type='password' name='password2' />
+        <input type='password' name='password2' value = '<%user.password%>'/>
       <br/>
       <div class='col-md-6'>
+        <br />
+        <br />
         <% if (user.avatar) { %>
-                      <img src='data:image/jpg;base64,<%= user.image %>' width=100 height=100 />
+                      <img src='data:image/jpg;base64,<%= user.image %>' width=240 height=360 />
                   <% } else { %>
                       <p>
                           No avatar
                       </p>
                   <% } %>
         </div>
-      Avatar:
+        <br />
+        <br />
+        <br />
+        <br />
       <br />
       <input type='file' name='avatar'/>
       <br />
+      <input type='submit' value='Update' />
+      <br /><br />
+      <a href= '/create_post'>New Post</a>
     </p>
 
   </div>
