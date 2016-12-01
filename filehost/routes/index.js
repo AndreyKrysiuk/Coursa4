@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-var mpromise = require('mpromise');
+
 var crypto = require('crypto');
 var UserModel = require('../user_model').UserModel;
 var PostModel = require('../posts_model').PostModel;
@@ -20,7 +20,7 @@ let sessionSecret = "jahdgalsdg^&(*&^%  _Asds)";
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
-router.use(busboyBodyParser({ limit: '5mb' }));
+router.use(busboyBodyParser());
 router.use(cookieParser());
 router.use(session({
 	secret: sessionSecret,
@@ -98,6 +98,41 @@ router.post('/login',
 
 router.get('/login-error', (req, res) => res.render('error', {error : 'Login error',  user : req.user}));
 
+router.post('/update', (req, res) => {
+	if(req.user === null){
+		res.render('error', {error : '400. Validation error', user : null});
+		return;
+	}
+			upload_file = req.files.file;
+			if(req.body.email !== null)
+				req.user.email = req.body.email;
+			if(req.body.password.length !== 0 && req.body.password2.length !== 0) {
+				if((req.body.password === req.body.password2)){
+						req.user.password = hash(req.body.password);
+				}
+			}
+			if(upload_file  !== null){
+				if(req.user.image !== null){
+					fs.unlink('./public/' + req.user.image);
+				}
+				let upload_path = './public/users_images/';
+				req.user.image = upload(upload_file , req.user.username, upload_path);
+
+			}
+      req.user.save((err) => {
+        if(!err){
+          res.redirect('/profile');
+        } else {
+          console.log(err);
+          if(err.name == 'ValidationError') {
+                  res.render('error', {error : '400. Validation error', user: req.user,});
+               } else {
+                   res.render('error', {error : '500. Server error', user: req.user,});
+               }
+        }
+      });
+});
+
 
 router.get('/profile', (req, res) => {
 	if(req.user){
@@ -107,76 +142,6 @@ router.get('/profile', (req, res) => {
 	}
 });
 
-var avatarPath;
-router.post('/uploadAvatar', function(req, res, next) {
-
-	var form = new multiparty.Form();
-	var uploadFile = {uploadPath: '', type: '', size: 0};
-	var maxSize = 2 * 1024 * 1024; //2MB
-	var supportMimeTypes = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'];
-	var errors = [];
-
-	form.on('error', function(err){
-			if(fs.existsSync(uploadFile.path)) {
-					fs.unlinkSync(uploadFile.path);
-					console.log('error');
-			}
-	});
-
-	form.on('close', function() {
-			if(errors.length == 0) {
-					res.send({status: 'ok', text: 'Success'});
-			}
-			else {
-					if(fs.existsSync(uploadFile.path)) {
-							fs.unlinkSync(uploadFile.path);
-					}
-					res.send({status: 'bad', errors: errors});
-			}
-	});
-	// listen on part event for image file
-	form.on('part', function(part) {
-			uploadFile.size = part.byteCount;
-			uploadFile.type = part.headers['content-type'];
-			if(req.user){
-				uploadFile.path = './files/' + req.user._id + '/' + part.filename;
-				if (!fs.existsSync('./files/' + req.user._id + '/')){
-						mkdirp('./files/' +  req.user._id + '/', function (err) {
-								if (err) console.error(err);
-								else console.log('dir created');
-						});
-				}
-			} else {
-				uploadFile.path = './files/' + part.filename;
-				if (!fs.existsSync('./files/')){
-						mkdirp('./files/', function (err) {
-								if (err) console.error(err);
-								else console.log('dir created');
-						});
-				}
-			}
-			avatarPath = uploadFile.path;
-			if(uploadFile.size > maxSize) {
-					errors.push('File size is ' + uploadFile.size / 1024 / 1024 + '. Limit is' + (maxSize / 1024 / 1024) + 'MB.');
-			}
-
-			if(supportMimeTypes.indexOf(uploadFile.type) == -1) {
-					errors.push('Unsupported mimetype ' + uploadFile.type);
-			}
-
-			if(errors.length == 0) {
-					var out = fs.createWriteStream(uploadFile.path);
-					part.pipe(out);
-			}
-			else {
-					part.resume();
-			}
-	});
-	form.parse(req);
-});
-
-
-
 router.get('/create_post', (req, res) => {
 	if(req.user)
 		res.render('create_post');
@@ -185,18 +150,38 @@ router.get('/create_post', (req, res) => {
 		}
 });
 
+
+function upload(fileObject, username, upload_path){
+	let fileName = username + '_' + fileObject.name;
+	let enc = fileObject.encoding;
+	let fileBytes = fileObject.data;
+	if(!fs.existsSync(upload_path)){
+		fs.mkdirSync(upload_path);
+		console.log("Dir created");
+	}
+		let filePath = upload_path + fileName;
+		let wstream = fs.createWriteStream(filePath);
+		wstream.on('finish', function () {
+		});
+		wstream.write(fileBytes);
+		wstream.end();
+		return 'users_images/' + fileName;
+};
+
 router.post('/register', (req, res) => {
   if(req.body.password === req.body.password2){
-
+		let fileObject = req.files.file;
+		let upload_path = './public/users_images/';
+		let image_path = upload(req.files.file, req.body.username, upload_path);
     var new_user = new UserModel({
       username : req.body.username,
       email : req.body.email,
       password : hash(req.body.password),
-      image : avatarPath
+      image : image_path
       });
       new_user.save((err) => {
         if(!err){
-          res.redirect('/profile');
+          res.redirect('/login');
         } else {
           console.log(err);
           if(err.name == 'ValidationError') {
