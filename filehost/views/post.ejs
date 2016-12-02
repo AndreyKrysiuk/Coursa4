@@ -16,12 +16,12 @@
     <br />
     <p>
       <a href = '/'>Main</a>
-      <a href = '/games'>Games</a>
-      <a href = '/videos'>Videos</a>
-      <a href = '/audios'>Audio</a>
-      <a href = '/texts'>Texts</a>
-      <a href = '/images'>Images</a>
-      <a href = '/software'>Software</a>
+      <a href = '/files/Games'>Games</a>
+      <a href = '/files/Videos'>Videos</a>
+      <a href = '/files/Audio'>Audio</a>
+      <a href = '/files/Text'>Texts</a>
+      <a href = '/files/Images'>Images</a>
+      <a href = '/files/Software'>Software</a>
       <% if (!user) { %>
                     <a href = '/login'>Login</a>
                 <% } else { %>
@@ -38,7 +38,7 @@
       <p>Created: <%= post.date%> by user <%= post.username%></p>
       <% for(var i=0; i<post.files.length; i++) { %>
         <li>
-            <a href='<%=post.files[i].path%>'><%= post.files[i].name%></a>
+            <a href= '<%= post.files[i].path%>'><%= post.files[i].name%></a>
         </li>
 
     <% } %>

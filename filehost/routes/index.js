@@ -165,7 +165,6 @@ router.post('/create_post', (req, res) => {
 		let upload_path = './public/user_files/' + req.user._id + '/';
 		for(var i = 0; i < req.files.files.length; i++){
 			let fileObject = req.files.files[i];
-
 			files[files.length] = {name : fileObject.name, path : upload_path + fileObject.name };
 			upload(fileObject, fileObject.name, upload_path);
 		}
@@ -205,9 +204,8 @@ function upload(fileObject, fileName, upload_path){
 };
 
 router.get('/post/:id', (req, res) => {
-    PostModel.findOne({
-			_id: req.params.id,
-		}).exec((err, post) => {
+    PostModel.findById(req.params.id
+		).exec((err, post) => {
 			if(!err){
 				if (post) {
 					res.render('post', {post : post, user : req.user});
@@ -248,5 +246,82 @@ router.post('/register', (req, res) => {
     } else {
       res.render('error', {error : 'Password is not correct. Repeat password correctly',  user : null,});
     }
+});
+
+router.get("/update_post/:id", (req, res) => {
+	PostModel.findById(req.params.id).exec((err, post) => {
+		if(!err){
+			if(post.username === req.user.username)
+				res.render('update_post', { post: post,  user : req.user});
+				else
+				res.render('error', {error : "Access is denied", user : req.user});
+		} else {
+			console.log(err);
+			res.render('error', {error: err, user : req.user});
+		}
+	});
+});
+
+router.post("/update_post/:id", (req, res) => {
+	PostModel.findById(req.params.id).exec((err, post) => {
+		if(!err){
+			if(post.username === req.user.username){
+				upload_files = req.files.files;
+				if(req.body.title !== null)
+					  post.title = req.body.title;
+				if(req.body.description !== null) {
+						post.description = req.body.description;
+				}
+				post.cathegory = req.body.cathegory;
+				if(upload_files  !== null){
+					for(var i = 0; i < post.files.length; i++){
+						fs.unlink(post.files[i].path);
+					}
+					let files = new Array();
+					let upload_path = './public/user_files/' + req.user._id + '/';
+					for(var i = 0; i < req.files.files.length; i++){
+						let fileObject = req.files.files[i];
+						files[files.length] = {name : fileObject.name, path : upload_path + fileObject.name };
+						upload(fileObject, fileObject.name, upload_path);
+					}
+					post.files = files;
+				}
+				post.save((err) => {
+					if(!err){
+						res.redirect('/post/' + post._id);
+					} else {
+						console.log(err);
+						if(err.name == 'ValidationError') {
+										res.render('error', {error : '400. Validation error', user: req.user,});
+								 } else {
+										 res.render('error', {error : '500. Server error', user: req.user,});
+								 }
+					}
+				});
+			}
+				else
+				{
+					res.render('error', {error : "Access is denied", user : req.user});
+				}
+		} else {
+			console.log(err);
+			res.render('error', {error: err, user : req.user});
+		}
+	});
+});
+
+
+
+router.get("/files/:cathegory", (req, res) => {
+	PostModel.find({
+		cathegory : req.params.cathegory
+	}).exec((err, posts) => {
+		if(!err){
+				res.render('cathegory', {title : req.params.cathegory, posts: posts,  user : req.user});
+		} else {
+			console.log(err);
+			res.render('error', {error: err, user : req.user});
+		}
+	});
 });
 module.exports = router;

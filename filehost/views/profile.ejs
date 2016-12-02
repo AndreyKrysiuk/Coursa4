@@ -15,12 +15,12 @@
   <div class='container'>
     <p>
       <a href = '/'>Main</a>
-      <a href = '/games'>Games</a>
-      <a href = '/videos'>Videos</a>
-      <a href = '/audios'>Audio</a>
-      <a href = '/texts'>Texts</a>
-      <a href = '/images'>Images</a>
-      <a href = '/software'>Software</a>
+      <a href = '/files/Games'>Games</a>
+      <a href = '/files/Videos'>Videos</a>
+      <a href = '/files/Audio'>Audio</a>
+      <a href = '/files/Text'>Texts</a>
+      <a href = '/files/Images'>Images</a>
+      <a href = '/files/Software'>Software</a>
       <a href = '/logout'>Logout</a>
       <br /><br />
       <form action='/update' method='POST' enctype="multipart/form-data">
@@ -69,6 +69,7 @@
       <% for(var i=0; i<posts.length; i++) { %>
         <li>
             <a href='/post/<%= posts[i]._id %>'><%= posts[i].title %></a>
+            <a href='/update_post/<%= posts[i]._id %>'>Update this post</a>
         </li>
 
     <% } %>
