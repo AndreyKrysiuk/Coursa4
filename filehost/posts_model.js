@@ -4,9 +4,9 @@ var Schema = mongoose.Schema;
 // Schemas
 var Post = new Schema({
     username : {
-      type : Schema.Types.ObjectId
+      type : String
     },
-    cathegoty : {
+    cathegory : {
       type : String,
       required : true
     },
@@ -22,7 +22,7 @@ var Post = new Schema({
       type : String,
       required : true
     },
-    files : [{type : String}],
+    files : [{name : String, path : String}],
     comments: [{type : Schema.Types.ObjectId}],
 });
 

@@ -1,0 +1,56 @@
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Main</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
+
+<body>
+  <div class='container'>
+    <br />
+    <p>
+      <a href = '/'>Main</a>
+      <a href = '/games'>Games</a>
+      <a href = '/videos'>Videos</a>
+      <a href = '/audios'>Audio</a>
+      <a href = '/texts'>Texts</a>
+      <a href = '/images'>Images</a>
+      <a href = '/software'>Software</a>
+      <% if (!user) { %>
+                    <a href = '/login'>Login</a>
+                <% } else { %>
+                    <a href = '/logout'>Logout</a>
+                    <a href = '/profile'>Profile</a>
+                <% } %>
+    </p>
+    <br />
+    <h1><%=post.title%></h1>
+    <h4>Description:</h4>
+    <p>
+    <%=post.description%>
+    </p>
+      <p>Created: <%= post.date%> by user <%= post.username%></p>
+      <% for(var i=0; i<post.files.length; i++) { %>
+        <li>
+            <a href='<%=post.files[i].path%>'><%= post.files[i].name%></a>
+        </li>
+
+    <% } %>
+
+    <script type="text/javascript">
+    function download(path)
+    {
+       var ifrm = document.getElementById("frame");
+       ifrm.src = path;
+    }
+    </script>
+
+  </div>
+</body>
+</html>

@@ -18,8 +18,7 @@ var User = new Schema({
     },
     image : {
       type : String
-    },
-    posts : [{type : Schema.Types.ObjectId}],
+    }
 });
 
 var UserModel = mongoose.model('users', User);

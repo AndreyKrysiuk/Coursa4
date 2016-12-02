@@ -7,7 +7,6 @@ var UserModel = require('../user_model').UserModel;
 var PostModel = require('../posts_model').PostModel;
 
 var fs = require("fs");
-var multiparty = require('multiparty');
 
 const bodyParser = require('body-parser');
 const busboyBodyParser = require('busboy-body-parser');
@@ -20,7 +19,7 @@ let sessionSecret = "jahdgalsdg^&(*&^%  _Asds)";
 
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
-router.use(busboyBodyParser());
+router.use(busboyBodyParser({multi : true}));
 router.use(cookieParser());
 router.use(session({
 	secret: sessionSecret,
@@ -103,7 +102,7 @@ router.post('/update', (req, res) => {
 		res.render('error', {error : '400. Validation error', user : null});
 		return;
 	}
-			upload_file = req.files.file;
+			upload_file = req.files.file[0];
 			if(req.body.email !== null)
 				req.user.email = req.body.email;
 			if(req.body.password.length !== 0 && req.body.password2.length !== 0) {
@@ -136,7 +135,16 @@ router.post('/update', (req, res) => {
 
 router.get('/profile', (req, res) => {
 	if(req.user){
-		res.render('profile', {user : req.user});
+		PostModel.find({
+			username : req.user.username
+		}).exec((err, posts) => {
+			if(!err){
+					res.render('profile', {posts : posts, user : req.user});
+			} else {
+				console.log(err);
+				res.render('error', {error: err, user : req.user});
+			}
+		});
 	} else {
 		res.redirect('/register');
 	}
@@ -150,9 +158,38 @@ router.get('/create_post', (req, res) => {
 		}
 });
 
+router.post('/create_post', (req, res) => {
+	if(req.body.title !== null && req.body.description !== null && req.files !== null){
+		let files = new Array();
 
-function upload(fileObject, username, upload_path){
-	let fileName = username + '_' + fileObject.name;
+		let upload_path = './public/user_files/' + req.user._id + '/';
+		for(var i = 0; i < req.files.files.length; i++){
+			let fileObject = req.files.files[i];
+
+			files[files.length] = {name : fileObject.name, path : upload_path + fileObject.name };
+			upload(fileObject, fileObject.name, upload_path);
+		}
+		new_post = new PostModel({
+			username : req.user.username,
+			title : req.body.title,
+			description : req.body.description,
+			cathegory : req.body.cathegory,
+			files : files
+		});
+		new_post.save((err) => {
+			if(!err){
+				console.log("Post " + new_post._id + " created");
+				res.render('profile', {user : req.user});
+			} else {
+				console.log(err);
+				res.render('error', {error : '400. Validation error', user : req.user});
+			}
+		});
+	}
+})
+
+
+function upload(fileObject, fileName, upload_path){
 	let enc = fileObject.encoding;
 	let fileBytes = fileObject.data;
 	if(!fs.existsSync(upload_path)){
@@ -165,19 +202,36 @@ function upload(fileObject, username, upload_path){
 		});
 		wstream.write(fileBytes);
 		wstream.end();
-		return 'users_images/' + fileName;
 };
+
+router.get('/post/:id', (req, res) => {
+    PostModel.findOne({
+			_id: req.params.id,
+		}).exec((err, post) => {
+			if(!err){
+				if (post) {
+					res.render('post', {post : post, user : req.user});
+				} else {
+					res.render('error', {error: "404. Not Found.", user : req.user});
+				}
+			} else {
+				console.log(err);
+				res.render('error', {error: err, user : req.user});
+			}
+		});
+});
 
 router.post('/register', (req, res) => {
   if(req.body.password === req.body.password2){
-		let fileObject = req.files.file;
+		let fileObject = req.files.file[0];
+		let fileName = req.body.username + '_' +  fileObject.name;
 		let upload_path = './public/users_images/';
-		let image_path = upload(req.files.file, req.body.username, upload_path);
+		upload(fileObject, fileName, upload_path);
     var new_user = new UserModel({
       username : req.body.username,
       email : req.body.email,
       password : hash(req.body.password),
-      image : image_path
+      image : 'users_images/' + fileName
       });
       new_user.save((err) => {
         if(!err){
@@ -185,14 +239,14 @@ router.post('/register', (req, res) => {
         } else {
           console.log(err);
           if(err.name == 'ValidationError') {
-                  res.render('error', {error : '400. Validation error', user: req.user,});
+                  res.render('error', {error : '400. Validation error', user: null,});
                } else {
-                   res.render('error', {error : '500. Server error', user: req.user,});
+                   res.render('error', {error : '500. Server error', user: null,});
                }
         }
       });
     } else {
-      res.render('error', {error : 'Password is not correct. Repeat password correctly',  user : req.user,});
+      res.render('error', {error : 'Password is not correct. Repeat password correctly',  user : null,});
     }
 });
 module.exports = router;
