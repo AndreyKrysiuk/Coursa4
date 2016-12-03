@@ -165,7 +165,7 @@ router.post('/create_post', (req, res) => {
 		let upload_path = './public/user_files/' + req.user._id + '/';
 		for(var i = 0; i < req.files.files.length; i++){
 			let fileObject = req.files.files[i];
-			files[files.length] = {name : fileObject.name, path : upload_path + fileObject.name };
+			files[files.length] = {name : fileObject.name, path : '/user_files/' + req.user._id + '/' + fileObject.name };
 			upload(fileObject, fileObject.name, upload_path);
 		}
 		new_post = new PostModel({
@@ -178,7 +178,7 @@ router.post('/create_post', (req, res) => {
 		new_post.save((err) => {
 			if(!err){
 				console.log("Post " + new_post._id + " created");
-				res.render('profile', {user : req.user});
+				res.redirect('/profile');
 			} else {
 				console.log(err);
 				res.render('error', {error : '400. Validation error', user : req.user});
@@ -249,65 +249,73 @@ router.post('/register', (req, res) => {
 });
 
 router.get("/update_post/:id", (req, res) => {
-	PostModel.findById(req.params.id).exec((err, post) => {
-		if(!err){
-			if(post.username === req.user.username)
-				res.render('update_post', { post: post,  user : req.user});
-				else
-				res.render('error', {error : "Access is denied", user : req.user});
-		} else {
-			console.log(err);
-			res.render('error', {error: err, user : req.user});
-		}
-	});
+	if(req.user){
+		PostModel.findById(req.params.id).exec((err, post) => {
+			if(!err){
+				if(post.username === req.user.username || req.user.admin === true)
+					res.render('update_post', { post: post,  user : req.user});
+					else
+					res.render('error', {error : "Access is denied", user : req.user});
+			} else {
+				console.log(err);
+				res.render('error', {error: err, user : req.user});
+			}
+		});
+	} else {
+		res.render('error', {error : "Access is denied", user : req.user});
+	}
 });
 
 router.post("/update_post/:id", (req, res) => {
-	PostModel.findById(req.params.id).exec((err, post) => {
-		if(!err){
-			if(post.username === req.user.username){
-				upload_files = req.files.files;
-				if(req.body.title !== null)
-					  post.title = req.body.title;
-				if(req.body.description !== null) {
-						post.description = req.body.description;
+	if(req.user){
+		PostModel.findById(req.params.id).exec((err, post) => {
+			if(!err){
+				if(post.username === req.user.username || req.user.admin === true){
+					upload_files = req.files.files;
+					if(req.body.title !== null)
+						  post.title = req.body.title;
+					if(req.body.description !== null) {
+							post.description = req.body.description;
+					}
+					post.cathegory = req.body.cathegory;
+					if(upload_files  !== null){
+						for(var i = 0; i < post.files.length; i++){
+							fs.unlink('./public' + post.files[i].path);
+						}
+						let files = new Array();
+						let upload_path = './public/user_files/' + req.user._id + '/';
+						for(var i = 0; i < req.files.files.length; i++){
+							let fileObject = req.files.files[i];
+							files[files.length] = {name : fileObject.name, path : '/user_files/'+  req.user._id + '/' + fileObject.name };
+							upload(fileObject, fileObject.name, upload_path);
+						}
+						post.files = files;
+					}
+					post.save((err) => {
+						if(!err){
+							res.redirect('/post/' + post._id);
+						} else {
+							console.log(err);
+							if(err.name == 'ValidationError') {
+											res.render('error', {error : '400. Validation error', user: req.user,});
+									 } else {
+											 res.render('error', {error : '500. Server error', user: req.user,});
+									 }
+						}
+					});
 				}
-				post.cathegory = req.body.cathegory;
-				if(upload_files  !== null){
-					for(var i = 0; i < post.files.length; i++){
-						fs.unlink(post.files[i].path);
+					else
+					{
+						res.render('error', {error : "Access is denied", user : req.user});
 					}
-					let files = new Array();
-					let upload_path = './public/user_files/' + req.user._id + '/';
-					for(var i = 0; i < req.files.files.length; i++){
-						let fileObject = req.files.files[i];
-						files[files.length] = {name : fileObject.name, path : upload_path + fileObject.name };
-						upload(fileObject, fileObject.name, upload_path);
-					}
-					post.files = files;
-				}
-				post.save((err) => {
-					if(!err){
-						res.redirect('/post/' + post._id);
-					} else {
-						console.log(err);
-						if(err.name == 'ValidationError') {
-										res.render('error', {error : '400. Validation error', user: req.user,});
-								 } else {
-										 res.render('error', {error : '500. Server error', user: req.user,});
-								 }
-					}
-				});
+			} else {
+				console.log(err);
+				res.render('error', {error: err, user : req.user});
 			}
-				else
-				{
-					res.render('error', {error : "Access is denied", user : req.user});
-				}
-		} else {
-			console.log(err);
-			res.render('error', {error: err, user : req.user});
-		}
-	});
+		});
+	} else {
+		res.redirect('/login;');
+	}
 });
 
 

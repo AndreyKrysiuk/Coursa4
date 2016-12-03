@@ -18,6 +18,10 @@ var User = new Schema({
     },
     image : {
       type : String
+    },
+    admin : {
+      type : Boolean,
+      default : false
     }
 });
 
