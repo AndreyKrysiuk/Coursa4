@@ -1,34 +1,48 @@
 
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-
   <title>Main</title>
+
+  <meta charset="utf-8">
   <meta name="description" content="The HTML5 Herald">
   <meta name="author" content="SitePoint">
 
-  <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link  href='/stylesheets/style.css' type="text/css" rel="stylesheet">
 </head>
 
 <body>
+  <header>
+    <nav class = "navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href='/'>Files4U</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li><a href = '/'>Main</a></li>
+          <li><a href = '/files/Games'>Games</a></li>
+          <li><a href = '/files/Videos'>Videos</a></li>
+          <li><a href = '/files/Audio'>Audio</a></li>
+          <li><a href = '/files/Text'>Texts</a></li>
+          <li><a href = '/files/Images'>Images</a></li>
+          <li><a href = '/files/Software'>Software</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <% if (!user) { %>
+                        <li><a href = '/register'><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
+                        <li><a href = '/login'><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                    <% } else { %>
+                        <li><a href = '/logout'><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                        <li><a href = '/profile'><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                    <% } %>
+       </ul>
+     </div>
+    </nav>
+  </header>
   <div class='container'>
-    <h1>Welcome!</h1>
-    <p>
-      <a href = '/'>Main</a>
-      <a href = '/files/Games'>Games</a>
-      <a href = '/files/Videos'>Videos</a>
-      <a href = '/files/Audio'>Audio</a>
-      <a href = '/files/Text'>Texts</a>
-      <a href = '/files/Images'>Images</a>
-      <a href = '/files/Software'>Software</a>
-      <% if (!user) { %>
-                    <a href = '/login'>Login</a>
-                <% } else { %>
-                    <a href = '/logout'>Logout</a>
-                    <a href = '/profile'>Profile</a>
-                <% } %>
-    </p>
+
   </div>
 </body>
 </html>

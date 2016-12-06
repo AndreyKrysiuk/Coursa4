@@ -1,45 +1,71 @@
-
 <html lang="en">
 <head>
   <meta charset="utf-8">
-
-  <title><%=title%></title>
   <meta name="description" content="The HTML5 Herald">
   <meta name="author" content="SitePoint">
 
-  <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <title><%=title%></title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link  href='/stylesheets/style.css' type="text/css" rel="stylesheet">
 </head>
 
-<body>
-  <div class='container'>
-    <br />
-    <p>
-      <a href = '/'>Main</a>
-      <a href = '/files/Games'>Games</a>
-      <a href = '/files/Videos'>Videos</a>
-      <a href = '/files/Audio'>Audio</a>
-      <a href = '/files/Text'>Texts</a>
-      <a href = '/files/Images'>Images</a>
-      <a href = '/files/Software'>Software</a>
-      <% if (!user) { %>
-                    <a href = '/login'>Login</a>
-                <% } else { %>
-                    <a href = '/logout'>Logout</a>
-                    <a href = '/profile'>Profile</a>
-                <% } %>
-
-
-        <% if (posts.length === 0) { %>
-                      <h2>This category is empty</h2>
-                  <% } else { %>
-                    <% for(var i = 0; i < posts.length; i++) { %>
-                      <li>
-                          <a href='/post/<%= posts[i]._id %>'><%= posts[i].title %></a>
-                      </li>
+  <body>
+    <header>
+      <nav class = "navbar navbar-inverse">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href='/'>Files4U</a>
+          </div>
+          <ul class="nav navbar-nav">
+            <li><a href = '/'>Main</a></li>
+            <li><a href = '/files/Games'>Games</a></li>
+            <li><a href = '/files/Videos'>Videos</a></li>
+            <li><a href = '/files/Audio'>Audio</a></li>
+            <li><a href = '/files/Text'>Texts</a></li>
+            <li><a href = '/files/Images'>Images</a></li>
+            <li><a href = '/files/Software'>Software</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <% if (!user) { %>
+                          <li><a href = '/register'><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
+                          <li><a href = '/login'><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                      <% } else { %>
+                          <li><a href = '/logout'><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                          <li><a href = '/profile'><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+                      <% } %>
+         </ul>
+       </div>
+      </nav>
+    </header>
+    <div class='container'>
+      <div>
+        <div class="contnent">
+          <div class="panel-group">
+              <% if (posts.length === 0) { %>
+                <div class="panel panel-info">
+                  <div class="panel-heading">Oops</div>
+                  <div class="panel-body">This cathegoty is empty now. But you can create new
+                    <% if (user) { %>
+                      <a href='/create_post'>post</a>
+                      <% } else { %>
+                        <a href='/register'>post</a>
                         <% } %>
-                  <% } %>
-    </p>
-  </div>
-</body>
+                   </div>
+                </div>
+                        <% } else { %>
+                          <% for(var i = 0; i < posts.length; i++) { %>
+                            <div class="panel panel-default">
+                              <div class="panel-heading"><a href='/post/<%= posts[i]._id %>'><%= posts[i].title %></a></div>
+                              <div class="panel-body"><%= posts[i].description %></div>
+                            </div>
+                              <% } %>
+                        <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

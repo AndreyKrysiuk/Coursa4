@@ -73,7 +73,7 @@ var salt = '13daghrnek#&$^@:"FSDK"!.vbn`139573';
 function hash(pass){
   return crypto.createHash('md5').update(pass + salt).digest("hex");
 }
-/* GET home page. */
+
 router.get('/', function(req, res, next) {
 	 res.render('main', {user : req.user});
 });
@@ -282,11 +282,18 @@ router.post("/update_post/:id", (req, res) => {
 						for(var i = 0; i < post.files.length; i++){
 							fs.unlink('./public' + post.files[i].path);
 						}
+						var user_creator = UserModel.findOne({username : post.username}, function(err, user){
+							if(!err){
+								return user;
+							} else {
+								res.render('error', {error : '500. Server error', user: req.user});
+							}
+						});
 						let files = new Array();
 						let upload_path = './public/user_files/' + req.user._id + '/';
 						for(var i = 0; i < req.files.files.length; i++){
 							let fileObject = req.files.files[i];
-							files[files.length] = {name : fileObject.name, path : '/user_files/'+  req.user._id + '/' + fileObject.name };
+							files[files.length] = {name : fileObject.name, path : '/user_files/'+  user_creator._id + '/' + fileObject.name };
 							upload(fileObject, fileObject.name, upload_path);
 						}
 						post.files = files;
@@ -299,7 +306,7 @@ router.post("/update_post/:id", (req, res) => {
 							if(err.name == 'ValidationError') {
 											res.render('error', {error : '400. Validation error', user: req.user,});
 									 } else {
-											 res.render('error', {error : '500. Server error', user: req.user,});
+											res.render('error', {error : '500. Server error', user: req.user,});
 									 }
 						}
 					});

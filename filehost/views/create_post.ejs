@@ -1,57 +1,67 @@
 <!doctype html>
-
-
 <html lang="en">
 <head>
   <meta charset="utf-8">
 
-
   <title>Create Post</title>
 
-  <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="css/styles.css?v=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link  href='/stylesheets/style.css' type="text/css" rel="stylesheet">
 </head>
-
-<p>
-  <a href = '/'>Main</a>
-  <a href = '/files/Games'>Games</a>
-  <a href = '/files/Videos'>Videos</a>
-  <a href = '/files/Audio'>Audio</a>
-  <a href = '/files/Text'>Texts</a>
-  <a href = '/files/Images'>Images</a>
-  <a href = '/files/Software'>Software</a>
-  <a href = '/logout'>Logout</a>
-</p>
 <body>
-	<div class='container'>
-		<h1>Create your post</h1>
-		<form action='/create_post' method='POST' enctype="multipart/form-data">
-		  Title:
+  <header>
+    <nav class = "navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href='/'>Files4U</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li><a href = '/'>Main</a></li>
+          <li><a href = '/files/Games'>Games</a></li>
+          <li><a href = '/files/Videos'>Videos</a></li>
+          <li><a href = '/files/Audio'>Audio</a></li>
+          <li><a href = '/files/Text'>Texts</a></li>
+          <li><a href = '/files/Images'>Images</a></li>
+          <li><a href = '/files/Software'>Software</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href = '/logout'><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+          <li><a href = '/profile'><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+       </ul>
+     </div>
+    </nav>
+  </header>
+  	<div class='container'>
+  		<h1>Create your post</h1>
+  		<form action='/create_post' method='POST' enctype="multipart/form-data">
+  		  Title:
+        <br/>
+  			   <input type='text' name='title' />
+  			<br/>
+        Description:
+        <br/>
+          <input type='text' name='description' size = 100/>
+        <br/>
+        Cathegory:
+        <select name = "cathegory">
+          <option selected value="Games">Games</option>
+          <option value="Images">Images</option>
+          <option value="Videos">Video</option>
+          <option value="Software">Software</option>
+          <option value="Audio">Audio</option>
+          <option value="Text">Text</option>
+        </select>
       <br/>
-			<input type='text' name='title' />
-			<br/>
-      Description:
-      <br/>
-      <input type='text' name='description' size = 100/>
-
-      Cathegory:
-      <select name = "cathegory">
-        <option selected value="Games">Games</option>
-        <option value="Images">Images</option>
-        <option value="Videos">Video</option>
-        <option value="Software">Software</option>
-        <option value="Audio">Audio</option>
-        <option value="Text">Text</option>
-      </select>
-    <br/>
-    Load Files:<br />
-    <input type='file' name='files' multiple>
-    <br />
-    <br /><br />``
-			<input type="submit" value='Create' />
-		</form>
-	</div>
+      Load Files:
+      <br />
+        <input type='file' name='files' multiple>
+      <br />
+      <br />
+      <br />
+  			<input type="submit" value='Create' />
+  		</form>
+  	</div>
 </body>
-</html>
 </html>

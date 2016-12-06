@@ -8,39 +8,55 @@
   <meta name="author" content="SitePoint">
 
   <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <link  href='/stylesheets/style.css' type="text/css" rel="stylesheet">
 </head>
 
 <body>
+  <header>
+    <nav class = "navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href='/'>Files4U</a>
+        </div>
+        <ul class="nav navbar-nav">
+          <li><a href = '/'>Main</a></li>
+          <li><a href = '/files/Games'>Games</a></li>
+          <li><a href = '/files/Videos'>Videos</a></li>
+          <li><a href = '/files/Audio'>Audio</a></li>
+          <li><a href = '/files/Text'>Texts</a></li>
+          <li><a href = '/files/Images'>Images</a></li>
+          <li><a href = '/files/Software'>Software</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href = '/logout'><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+          <li><a href = '/profile'><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+       </ul>
+     </div>
+    </nav>
+  </header>
   <div class='container'>
-    <p>
-      <a href = '/'>Main</a>
-      <a href = '/files/Games'>Games</a>
-      <a href = '/files/Videos'>Videos</a>
-      <a href = '/files/Audio'>Audio</a>
-      <a href = '/files/Text'>Texts</a>
-      <a href = '/files/Images'>Images</a>
-      <a href = '/files/Software'>Software</a>
-      <a href = '/logout'>Logout</a>
-      <br /><br />
+      <br />
+      <br />
+
       <form action='/update' method='POST' enctype="multipart/form-data">
-        <p>
-          Username : <%= user.username%>
-        </p>
+        <p>Username : <%= user.username%></p>
 
         E-mail:
         <br/>
-        <input type='text' name='email' value = '<%= user.email%>' />
-      <br/>
+          <input type='text' name='email' value = '<%= user.email%>' />
+          <br/>
   			Password:
         <br/>
-  			<input type='password' name='password'/>
+  			   <input type='password' name='password'/>
   			<br/>
         Repeat password:
         <br/>
-        <input type='password' name='password2'/>
-      <br/>
-      <div class='col-md-6'>
+          <input type='password' name='password2'/>
+        <br/>
+        <div class='col-md-6'>
         <br />
         <br />
         <% if (user.image) { %>
@@ -52,26 +68,23 @@
         <br />
         <br />
         <br />
-      <br />
-      <input type='file' name='file'/>
-      <br />
-      <input type='submit' value='Update' />
-      <br /><br />
-      <a href= '/create_post'>New Post</a>
-    </p>
+        <br />
+          <input type='file' name='file'/>
+        <br />
+          <input type='submit' value='Update' />
+        <br />
+        <br />
+        <a href= '/create_post'>New Post</a>
+        <br />
+        <br />
 
-    <br />
-    <br />
     <% if(posts !== null){ %>
-      <p>
-        Your Posts:
-      </p>
-      <% for(var i=0; i<posts.length; i++) { %>
-        <li>
-            <a href='/post/<%= posts[i]._id %>'><%= posts[i].title %></a>
-        </li>
-
-    <% } %>
+      <p>Your Posts:</p>
+      <ul>
+        <% for(var i=0; i<posts.length; i++) { %>
+          <li><a href='/post/<%= posts[i]._id %>'><%= posts[i].title %></a></li>
+        <% } %>
+      </ul>
     <% } %>
 
   </div>
