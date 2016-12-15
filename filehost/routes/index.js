@@ -1,11 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-
+var nconf = require('nconf');
 var crypto = require('crypto');
 var UserModel = require('../user_model').UserModel;
 var PostModel = require('../posts_model').PostModel;
 
+var csrf = require('csurf');
 var fs = require("fs");
 
 const bodyParser = require('body-parser');
@@ -17,6 +18,7 @@ const session = require('express-session');
 
 let sessionSecret = "jahdgalsdg^&(*&^%  _Asds)";
 
+
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 router.use(busboyBodyParser({multi : true}));
@@ -26,6 +28,7 @@ router.use(session({
 	resave: false,
 	saveUninitialized: true
 }));
+router.use(csrf());
 router.use(passport.initialize());
 router.use(passport.session());
 
@@ -68,22 +71,20 @@ passport.use(new LocalStrategy((username, password, done) => {
       });
 }));
 
-
 var salt = '13daghrnek#&$^@:"FSDK"!.vbn`139573';
 function hash(pass){
   return crypto.createHash('md5').update(pass + salt).digest("hex");
 }
-
 router.get('/', function(req, res, next) {
+  console.log(req.user);
 	 res.render('main', {user : req.user});
 });
-
 router.get('/register', (req, res) => {
-  res.render('register');
+  res.render('register', {csrfToken : req.csrfToken()});
 });
 
 router.get('/login', (req, res) => {
-  res.render('login');
+	res.render("login", {csrfToken : req.csrfToken()});
 });
 
 router.get('/logout', (req, res) => {
@@ -92,7 +93,7 @@ router.get('/logout', (req, res) => {
 });
 
 router.post('/login',
-	passport.authenticate('local', { failureRedirect: '/login-error' }),
+	passport.authenticate('local', { failureRedirect: '/login-error'}),
   (req, res) => res.redirect('/'));
 
 router.get('/login-error', (req, res) => res.render('error', {error : 'Login error',  user : req.user}));
@@ -110,13 +111,13 @@ router.post('/update', (req, res) => {
 						req.user.password = hash(req.body.password);
 				}
 			}
-			if(upload_file  !== null){
-				if(req.user.image !== null){
+			if(upload_file.data.length !== 0){
+				if(req.user.image){
 					fs.unlink('./public/' + req.user.image);
 				}
-				let upload_path = './public/users_images/';
-				req.user.image = upload(upload_file , req.user.username, upload_path);
 
+				upload(upload_file , req.user.username + '_' + upload_file.name, "./public/users_images/");
+				req.user.image =  'users_images/' + req.user.username + '_' + upload_file.name;
 			}
       req.user.save((err) => {
         if(!err){
@@ -139,7 +140,7 @@ router.get('/profile', (req, res) => {
 			username : req.user.username
 		}).exec((err, posts) => {
 			if(!err){
-					res.render('profile', {posts : posts, user : req.user});
+					res.render('profile', {posts : posts, user : req.user,  csrfToken : req.csrfToken()});
 			} else {
 				console.log(err);
 				res.render('error', {error: err, user : req.user});
@@ -152,7 +153,7 @@ router.get('/profile', (req, res) => {
 
 router.get('/create_post', (req, res) => {
 	if(req.user)
-		res.render('create_post');
+		res.render('create_post',  {csrfToken : req.csrfToken()});
 		else {
 			res.redirect('/register');
 		}
@@ -162,7 +163,7 @@ router.post('/create_post', (req, res) => {
 	if(req.body.title !== null && req.body.description !== null && req.files !== null){
 		let files = new Array();
 
-		let upload_path = './public/user_files/' + req.user._id + '/';
+		let upload_path = "./public/user_files/" + req.user._id + '/';
 		for(var i = 0; i < req.files.files.length; i++){
 			let fileObject = req.files.files[i];
 			files[files.length] = {name : fileObject.name, path : '/user_files/' + req.user._id + '/' + fileObject.name };
@@ -221,15 +222,21 @@ router.get('/post/:id', (req, res) => {
 
 router.post('/register', (req, res) => {
   if(req.body.password === req.body.password2){
-		let fileObject = req.files.file[0];
-		let fileName = req.body.username + '_' +  fileObject.name;
-		let upload_path = './public/users_images/';
-		upload(fileObject, fileName, upload_path);
+		let filePath;
+		if(req.files.file !== null){
+			let fileObject = req.files.file[0];
+			console.log(fileObject);
+			let fileName = req.body.username + '_' +  fileObject.name;
+			if(fileObject.data.length !== 0){
+				filePath = ('users_images/' + fileName);
+				upload(fileObject, fileName, "./public/user_images/");
+			}
+		}
     var new_user = new UserModel({
       username : req.body.username,
       email : req.body.email,
       password : hash(req.body.password),
-      image : 'users_images/' + fileName
+      image : filePath
       });
       new_user.save((err) => {
         if(!err){
@@ -248,95 +255,5 @@ router.post('/register', (req, res) => {
     }
 });
 
-router.get("/update_post/:id", (req, res) => {
-	if(req.user){
-		PostModel.findById(req.params.id).exec((err, post) => {
-			if(!err){
-				if(post.username === req.user.username || req.user.admin === true)
-					res.render('update_post', { post: post,  user : req.user});
-					else
-					res.render('error', {error : "Access is denied", user : req.user});
-			} else {
-				console.log(err);
-				res.render('error', {error: err, user : req.user});
-			}
-		});
-	} else {
-		res.render('error', {error : "Access is denied", user : req.user});
-	}
-});
 
-router.post("/update_post/:id", (req, res) => {
-	if(req.user){
-		PostModel.findById(req.params.id).exec((err, post) => {
-			if(!err){
-				if(post.username === req.user.username || req.user.admin === true){
-					upload_files = req.files.files;
-					if(req.body.title !== null)
-						  post.title = req.body.title;
-					if(req.body.description !== null) {
-							post.description = req.body.description;
-					}
-					post.cathegory = req.body.cathegory;
-					if(upload_files  !== null){
-						for(var i = 0; i < post.files.length; i++){
-							fs.unlink('./public' + post.files[i].path);
-						}
-						var user_creator = UserModel.findOne({username : post.username}, function(err, user){
-							if(!err){
-								return user;
-							} else {
-								res.render('error', {error : '500. Server error', user: req.user});
-							}
-						});
-						let files = new Array();
-						let upload_path = './public/user_files/' + req.user._id + '/';
-						for(var i = 0; i < req.files.files.length; i++){
-							let fileObject = req.files.files[i];
-							files[files.length] = {name : fileObject.name, path : '/user_files/'+  user_creator._id + '/' + fileObject.name };
-							upload(fileObject, fileObject.name, upload_path);
-						}
-						post.files = files;
-					}
-					post.save((err) => {
-						if(!err){
-							res.redirect('/post/' + post._id);
-						} else {
-							console.log(err);
-							if(err.name == 'ValidationError') {
-											res.render('error', {error : '400. Validation error', user: req.user,});
-									 } else {
-											res.render('error', {error : '500. Server error', user: req.user,});
-									 }
-						}
-					});
-				}
-					else
-					{
-						res.render('error', {error : "Access is denied", user : req.user});
-					}
-			} else {
-				console.log(err);
-				res.render('error', {error: err, user : req.user});
-			}
-		});
-	} else {
-		res.redirect('/login;');
-	}
-});
-
-
-
-router.get("/files/:cathegory", (req, res) => {
-	PostModel.find({
-		cathegory : req.params.cathegory
-	}).exec((err, posts) => {
-		if(!err){
-				res.render('cathegory', {title : req.params.cathegory, posts: posts,  user : req.user});
-		} else {
-			console.log(err);
-			res.render('error', {error: err, user : req.user});
-		}
-	});
-});
 module.exports = router;

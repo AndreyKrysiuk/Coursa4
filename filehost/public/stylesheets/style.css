@@ -40,3 +40,14 @@ background-color:#0e5b8f;
 .logbar {
   float: right;
 }*/
+
+.panel-heading {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.jumbotron {
+  height: 500px;
+}
+
+.

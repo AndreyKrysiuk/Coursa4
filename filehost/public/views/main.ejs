@@ -1,7 +1,7 @@
 
 <html lang="en">
 <head>
-  <title><%= post.title%></title>
+  <title>Main</title>
 
   <meta charset="utf-8">
   <meta name="description" content="The HTML5 Herald">
@@ -32,7 +32,7 @@
         <ul class="nav navbar-nav navbar-right">
           <% if (!user) { %>
                         <li><a href = '/register'><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
-                        <li><a href = '/login'><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        <li><a id="login" href = '/login'><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                     <% } else { %>
                         <li><a href = '/logout'><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
                         <li><a href = '/profile'><span class="glyphicon glyphicon-user"></span> Profile</a></li>
@@ -42,24 +42,8 @@
     </nav>
   </header>
   <div class='container'>
-    <br />
-    <h1><%=post.title%></h1>
-    <h4>Description:</h4>
-    <p><%=post.description%> </p>
-    <p>Created: <%= post.date%> by user <%= post.username%></p>
 
-    <ul class="list-group">
-    <% for(var i=0; i < post.files.length; i++) { %>
-
-        <li class="list-group-item"><a href= '<%= post.files[i].path %>' download><%= post.files[i].name%></a></li>
-
-    <% } %>
-    </ul>
-    <% if (user) { %>
-    <% if (user.username === post.username || user.admin) { %>
-                <a href='/update_post/<%= post._id%>' class="btn btn-info" role="button">Update post</a>
-              <% } %>
-              <% } %>
   </div>
+    <script src="/js/main.js"></script>
 </body>
 </html>

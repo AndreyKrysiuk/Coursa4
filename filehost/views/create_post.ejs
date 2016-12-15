@@ -8,6 +8,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/i18n/defaults-*.min.js"></script>
+
     <link  href='/stylesheets/style.css' type="text/css" rel="stylesheet">
 </head>
 <body>
@@ -35,33 +40,34 @@
   </header>
   	<div class='container'>
   		<h1>Create your post</h1>
-  		<form action='/create_post' method='POST' enctype="multipart/form-data">
-  		  Title:
-        <br/>
-  			   <input type='text' name='title' />
-  			<br/>
-        Description:
-        <br/>
-          <input type='text' name='description' size = 100/>
-        <br/>
-        Cathegory:
-        <select name = "cathegory">
-          <option selected value="Games">Games</option>
+      <form action='/create_post' method='POST' enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input type="username" class="form-control" name="title" id="title" >
+        </div>
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <input type="text" class="form-control" name="description" id="description" >
+        </div>
+        <div class="form-group">
+        <label for="cathegory">Cathegory:</label>
+        <br />
+        <select name = "cathegory" class="selectpicker" title="Choose one of the following...">
+          <option value="Games">Games</option>
           <option value="Images">Images</option>
           <option value="Videos">Video</option>
           <option value="Software">Software</option>
           <option value="Audio">Audio</option>
           <option value="Text">Text</option>
         </select>
-      <br/>
-      Load Files:
-      <br />
-        <input type='file' name='files' multiple>
-      <br />
-      <br />
-      <br />
-  			<input type="submit" value='Create' />
-  		</form>
+      </div>
+        <div class="form-group">
+          <label for="files">Load your files:</label>
+          <input type="file" name="files" id="files" multiple="multiple">
+        </div>
+        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+        <button type="submit" class="btn btn-primary">Create</button>
+      </form>
   	</div>
 </body>
 </html>

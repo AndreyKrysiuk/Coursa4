@@ -38,54 +38,55 @@
     </nav>
   </header>
   <div class='container'>
-      <br />
-      <br />
-
+    <div class="info">
       <form action='/update' method='POST' enctype="multipart/form-data">
-        <p>Username : <%= user.username%></p>
-
-        E-mail:
-        <br/>
-          <input type='text' name='email' value = '<%= user.email%>' />
-          <br/>
-  			Password:
-        <br/>
-  			   <input type='password' name='password'/>
-  			<br/>
-        Repeat password:
-        <br/>
-          <input type='password' name='password2'/>
-        <br/>
-        <div class='col-md-6'>
-        <br />
-        <br />
-        <% if (user.image) { %>
-                      <img src='<%= user.image%>' width=240 height=280/>
-                  <% } else { %>
-                      <img src='https://pp.vk.me/c406321/v406321729/416c/Nv-as8CrDq0.jpg' width=240 height=280 alt='anonymus' />
-                  <% } %>
+      <div class="jumbotron col-lg-6">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="username" class="form-control" name="username" value = "<%= user.username%>" disabled="true">
         </div>
-        <br />
-        <br />
-        <br />
-        <br />
-          <input type='file' name='file'/>
-        <br />
-          <input type='submit' value='Update' />
-        <br />
-        <br />
-        <a href= '/create_post'>New Post</a>
-        <br />
-        <br />
-
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" class="form-control" name="email" value = "<%= user.email%>">
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" class="form-control" name="password">
+        </div>
+        <div class="form-group">
+          <label for="password2">Password:</label>
+          <input type="password" class="form-control" name="password2">
+        </div>
+        <div class="form-group">
+          <label for="file">Load Avatar:</label>
+          <input type="file" name="file" id="file">
+        </div>
+          <button type="submit" class="btn btn-primary">Update</button>
+          <a href="/create_post" class="btn btn-primary" role="button">New Post</a>
+      </div>
+      <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    </form>
+      <div class=" jumbotron col-lg-6" >
+      <% if (user.image) { %>
+                    <img src="<%= user.image%>" class="img-thumbnail" width=320>
+                <% } else { %>
+                    <img src='https://pp.vk.me/c406321/v406321729/416c/Nv-as8CrDq0.jpg' class="img-thumbnail" width=320  alt='anonymus' />
+                <% } %>
+      </div>
+    </div>
+      <div class=" jumbotron col-lg-12" >
     <% if(posts !== null){ %>
-      <p>Your Posts:</p>
+        <h3 float = "left">Your posts</h3>
       <ul>
         <% for(var i=0; i<posts.length; i++) { %>
-          <li><a href='/post/<%= posts[i]._id %>'><%= posts[i].title %></a></li>
+          <div class="panel panel-default">
+            <div class="panel-heading"><a href='/post/<%= posts[i]._id %>'><%= posts[i].title %></a></div>
+            <div class="panel-body"><%= posts[i].description %></div>
+          </div>
         <% } %>
       </ul>
     <% } %>
+  </div>
 
   </div>
 </body>
