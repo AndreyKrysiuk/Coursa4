@@ -42,18 +42,18 @@
 	<div class='container'>
     <h1>Login</h1>
     <form action='/login' method='POST'>
-      <div class="form-group">
-        <label for="username">Username:</label>
-        <input type="username" class="form-control" name="username">
+      <div class="form-group has-feedback nameBlock">
+          <label class="control-label" for="username">Username:</label>
+          <input type="text" class="form-control" id="username" aria-describedby="inputSuccess2Status"  name="username">
       </div>
-      <div class="form-group">
-        <label for="pwd">Password:</label>
-        <input type="password" class="form-control" name="password">
+      <div class="form-group has-feedback passwordBlock">
+          <label class="control-label" for="password">Password:</label>
+          <input type="password" class="form-control" id="password" aria-describedby="inputSuccess2Status" name="password">
       </div>
       <input type="hidden" name="_csrf" value="<%=csrfToken%>">
       <button type="submit" class="btn btn-primary">Login</button>
     </form>
 	</div>
-  <script src="js/scripts.js"></script>
+  <script src="/js/login.js"></script>
 </body>
 </html>

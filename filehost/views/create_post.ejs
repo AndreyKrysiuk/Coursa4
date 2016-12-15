@@ -41,18 +41,18 @@
   	<div class='container'>
   		<h1>Create your post</h1>
       <form action='/create_post' method='POST' enctype="multipart/form-data">
-        <div class="form-group">
+        <div class="form-group has-feedback title">
           <label for="title">Title:</label>
-          <input type="username" class="form-control" name="title" id="title" >
+          <input type="text" class="form-control" name="title" id="title" aria-describedby="inputSuccess2Status">
         </div>
-        <div class="form-group">
+        <div class="form-group has-feedback description">
           <label for="description">Description:</label>
-          <input type="text" class="form-control" name="description" id="description" >
+          <textarea type="text" class="form-control" name="description" id="description" aria-describedby="inputSuccess2Status"></textarea>
         </div>
-        <div class="form-group">
+        <div class="form-group has-feedback ">
         <label for="cathegory">Cathegory:</label>
         <br />
-        <select name = "cathegory" class="selectpicker" title="Choose one of the following...">
+        <select id="cathegory" name = "cathegory" class="selectpicker" title="Choose one of the following...">
           <option value="Games">Games</option>
           <option value="Images">Images</option>
           <option value="Videos">Video</option>
@@ -69,5 +69,6 @@
         <button type="submit" class="btn btn-primary">Create</button>
       </form>
   	</div>
+    <script src="/js/valid_post.js"></script>
 </body>
 </html>

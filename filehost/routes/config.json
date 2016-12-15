@@ -1,0 +1,17 @@
+{
+  "session" : {
+    "secret" : "jahdgalsdg^&(*&^%  _Asds)",
+    "resave" : false,
+  	"saveUninitialized" : true
+  },
+  "hash" : {
+    "salt" :  "13daghrnek#&$^@:/'FSDK'/!.vbn`139573"
+  },
+  "upload_pathes" : {
+    "files" : "./public/user_files/",
+    "images" : "./public/users_images/"
+  },
+  "db" : {
+    "path" : "mongodb://localhost/course_work"
+  }
+}

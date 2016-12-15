@@ -76,7 +76,6 @@ function hash(pass){
   return crypto.createHash('md5').update(pass + salt).digest("hex");
 }
 router.get('/', function(req, res, next) {
-  console.log(req.user);
 	 res.render('main', {user : req.user});
 });
 router.get('/register', (req, res) => {
@@ -94,7 +93,9 @@ router.get('/logout', (req, res) => {
 
 router.post('/login',
 	passport.authenticate('local', { failureRedirect: '/login-error'}),
-  (req, res) => res.redirect('/'));
+  (req, res) => {
+		res.redirect('/')
+	});
 
 router.get('/login-error', (req, res) => res.render('error', {error : 'Login error',  user : req.user}));
 
@@ -229,7 +230,7 @@ router.post('/register', (req, res) => {
 			let fileName = req.body.username + '_' +  fileObject.name;
 			if(fileObject.data.length !== 0){
 				filePath = ('users_images/' + fileName);
-				upload(fileObject, fileName, "./public/user_images/");
+				upload(fileObject, fileName, "./public/users_images/");
 			}
 		}
     var new_user = new UserModel({
@@ -255,5 +256,15 @@ router.post('/register', (req, res) => {
     }
 });
 
+
+router.get('/searching', function(req, res){
+	 PostModel.find({"title" : new RegExp(req.query.search, 'i')}).exec((err, posts) => {
+		 if(!err) {
+			 	res.send(JSON.stringify(posts));
+		 } else {
+			 res.send(JSON.stringify(err));
+		 }
+	 });
+});
 
 module.exports = router;

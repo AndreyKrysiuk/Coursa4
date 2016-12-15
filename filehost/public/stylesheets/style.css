@@ -50,4 +50,6 @@ background-color:#0e5b8f;
   height: 500px;
 }
 
-.
+.error{
+  color: red;
+}

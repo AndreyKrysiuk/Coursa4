@@ -1,0 +1,5 @@
+{
+  "mongo" : {
+     "path" : "mongodb://localhost/course_work"
+  }
+}

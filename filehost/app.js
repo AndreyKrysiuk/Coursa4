@@ -4,10 +4,13 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 
+var update_post = require('./routes/update_post');
 var routes = require('./routes/index');
 var api_users = require('./routes/api_users');
 var api_posts = require('./routes/api_posts');
+var cathegory = require('./routes/files');
 
 var app = express();
 
@@ -15,6 +18,8 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+var mongo_path = 'mongodb://localhost/course_work';
+mongoose.connect(mongo_path);
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
@@ -26,6 +31,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/api/users', api_users);
 app.use('/api/posts', api_posts);
+app.use('/files/', cathegory);
+app.use('/update_post/', update_post);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
