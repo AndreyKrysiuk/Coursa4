@@ -39,7 +39,7 @@
                 </button>
               </div>
             </div>
-            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+            <input type="hidden" name="_csrf" value=<%=csrfToken%>>
           </form>
 
         <ul class="nav navbar-nav navbar-right">
@@ -56,10 +56,11 @@
   </header>
   <div class='container'>
     <br />
-    <h1><%=post.title%></h1>
-    <h4>Description:</h4>
-    <p><%=post.description%> </p>
-    <p>Created: <%= post.date%> by user <%= post.username%></p>
+
+    <div class="panel panel-default">
+      <div class="panel-heading"><h2><%=post.title%></h2></div>
+      <div class="panel-body"> <h4>Description : <%=post.description%></h4> </div>
+    </div>
 
     <ul class="list-group">
     <% for(var i=0; i < post.files.length; i++) { %>
@@ -73,6 +74,7 @@
                 <a href='/update_post/<%= post._id%>' class="btn btn-info" role="button">Update post</a>
               <% } %>
               <% } %>
+                <div class="well well-sm text-right">Created: <%= post.date%> by user <%= post.username%></div>
   </div>
   <script src="/js/main.js"></script>
   <script src="/js/valid_search.js"></script>

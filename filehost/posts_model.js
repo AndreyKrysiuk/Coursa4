@@ -22,8 +22,7 @@ var Post = new Schema({
       type : String,
       required : true
     },
-    files : [{name : String, path : String}],
-    comments: [{type : Schema.Types.ObjectId}],
+    files : [{name : String, path : String}]
 });
 
 var PostModel = mongoose.model('posts', Post);

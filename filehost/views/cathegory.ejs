@@ -14,7 +14,6 @@
   <link  href='/stylesheets/style.css' type="text/css" rel="stylesheet">
 </head>
 
-  <body>
     <header>
       <nav class = "navbar navbar-inverse">
         <div class="container-fluid">
@@ -39,7 +38,7 @@
                   </button>
                 </div>
               </div>
-              <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+              <input type="hidden" name="_csrf" value=<%=csrfToken%>>
             </form>
 
           <ul class="nav navbar-nav navbar-right">
@@ -54,30 +53,66 @@
        </div>
       </nav>
     </header>
+    <body>
+
     <div class='container'>
       <div>
-        <div class="contnent">
-          <div class="panel-group">
-              <% if (posts.length === 0) { %>
-                <div class="panel panel-info">
-                  <div class="panel-heading">Oops</div>
-                  <div class="panel-body">This cathegoty is empty now. But you can create new
-                    <% if (user) { %>
-                      <a href='/create_post'>post</a>
+        <div class="panel-group">
+            <% if (typeof posts === 'undefined') { %>
+              <div class="panel panel-info">
+                <div class="panel-heading">Oops</div>
+                <div class="panel-body">This cathegoty is empty now. But you can create new
+                  <% if (user) { %>
+                    <a href='/create_post'>post</a>
+                    <% } else { %>
+                      <a href='/register'>post</a>
+                      <% } %>
+                 </div>
+              </div>
                       <% } else { %>
-                        <a href='/register'>post</a>
-                        <% } %>
-                   </div>
-                </div>
-                        <% } else { %>
-                          <% for(var i = 0; i < posts.length; i++) { %>
-                            <div class="panel panel-default">
-                              <div class="panel-heading"><a href='/post/<%= posts[i]._id %>'><%= posts[i].title %></a></div>
-                              <div class="panel-body"><%= posts[i].description %></div>
-                            </div>
-                              <% } %>
-                        <% } %>
-          </div>
+                        <% for(var i = 0; i < posts.length; i++) { %>
+                          <div class="panel panel-default">
+                            <div class="panel-heading"><a href='/post/<%= posts[i]._id %>'><%= posts[i].title %></a></div>
+                            <div class="panel-body "><%= posts[i].description %></div>
+                            <script>
+                            var size = 120,
+                              panel_body= $('.panel-body'),
+                              panelText = panel_body.text();
+
+                              if(panelText.length > size){
+	                                 panel_body.text(panelText.slice(0, size) + ' ...');
+                                 }
+                            </script>
+                          </div>
+                          <% } %>
+                          <% if (pageCount > 1) { %>
+                                <ul class="pagination">
+                                    <% if (currentPage > 1) { %>
+                                        <li><a href="/files/<%= title%>?page=1">&laquo;</a></li>
+                                    <% } %>
+                                    <% var i = 1;
+                                    if (currentPage > 5) {
+                                        i = +currentPage - 4;
+                                    } %>
+                                    <% if (i !== 1) { %>
+                                        <li class="disabled"><a href="#">...</a></li>
+                                    <% } %>
+                                    <% for (i; i<=pageCount; i++) { %>
+                                        <% if (currentPage == i) { %>
+                                            <li class="active"><span><%= i %> <span class="sr-only">(current)</span></span></li>
+                                        <% } else { %>
+                                            <li><a href="/files/<%= title%>?page=<%= i %>"><%= i %></a></li>
+                                        <% } %>
+                                        <% if (i == (+currentPage + 4)) { %>
+                                            <li class="disabled"><a href="#">...</a></li>
+                                        <% break; } %>
+                                    <% } %>
+                                    <% if (currentPage != pageCount) { %>
+                                        <li><a href="/files/<%= title%>?page=<%= pageCount %>">&raquo;</a></li>
+                                    <% } %>
+                                </ul>
+                            <% } %>
+                            <% } %>
         </div>
       </div>
     </div>

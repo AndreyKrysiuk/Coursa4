@@ -36,7 +36,7 @@
                 </button>
               </div>
             </div>
-            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+            <input type="hidden" name="_csrf" value=<%=csrfToken%>>
           </form>
         <ul class="nav navbar-nav navbar-right">
           <li><a href = '/register'><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
@@ -69,7 +69,7 @@
         <label class="control-label" for="file">Load Avatar:</label>
         <input type="file" class="filestyle" data-buttonBefore="true" name="file" id="file" accept="image/*">
       </div>
-      <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+      <input type="hidden" name="_csrf" value=<%=csrfToken%>>
       <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
     <% if (error) { %>

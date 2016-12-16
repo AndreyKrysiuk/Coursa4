@@ -39,7 +39,7 @@
                 </button>
               </div>
             </div>
-            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+            <input type="hidden" name="_csrf" value=<%=csrfToken%>>
           </form>
         <ul class="nav navbar-nav navbar-right">
           <li><a href = '/logout'><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
@@ -75,7 +75,7 @@
             <label class="control-label" for="files">Load your files:</label>
             <input type="file" class="filestyle" data-buttonBefore="true" name="files" id="files" multiple="multiple">
         </div>
-        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+        <input type="hidden" name="_csrf" value=<%=csrfToken%>>
         <button type="submit" class="btn btn-primary">Create</button>
       </form>
   	</div>
