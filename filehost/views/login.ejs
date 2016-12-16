@@ -4,8 +4,6 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-
-
   <title>Login</title>
 
   <!-- Latest compiled and minified CSS -->
@@ -32,6 +30,18 @@
           <li><a href = '/files/Images'>Images</a></li>
           <li><a href = '/files/Software'>Software</a></li>
         </ul>
+          <form action='/search' method='GET' class="navbar-form navbar-left" id="search_form">
+          <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="Search" id="search" name="search">
+              <div class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="submit">
+                  <i class="glyphicon glyphicon-search"></i>
+                </button>
+              </div>
+            </div>
+            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+          </form>
+
         <ul class="nav navbar-nav navbar-right">
             <li><a href = '/register'><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
             <li><a href = '/login'><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -41,7 +51,7 @@
   </header>
 	<div class='container'>
     <h1>Login</h1>
-    <form action='/login' method='POST'>
+    <form action='/login' method='POST' id="login_form">
       <div class="form-group has-feedback nameBlock">
           <label class="control-label" for="username">Username:</label>
           <input type="text" class="form-control" id="username" aria-describedby="inputSuccess2Status"  name="username">
@@ -53,7 +63,20 @@
       <input type="hidden" name="_csrf" value="<%=csrfToken%>">
       <button type="submit" class="btn btn-primary">Login</button>
     </form>
+
+<br />
+    <% if (error) { %>
+        <div class="alert alert-danger">
+          <strong>Error!</strong> <%=error%>
+        </div>
+        <script >
+        $('.alert').show(0).delay(5000).fadeOut('slow');
+        </script>
+        <% } %>
+
 	</div>
   <script src="/js/login.js"></script>
+  <script src="/js/valid_search.js"></script>
+  <script src="/js/main.js"></script>
 </body>
 </html>

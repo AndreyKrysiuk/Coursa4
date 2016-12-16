@@ -2,7 +2,8 @@ var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
 var PostModel = require('../posts_model').PostModel;
-
+var UserModel = require('../user_model').UserModel;
+var fs = require('fs');
 var csrf = require('csurf');
 router.use(csrf());
 
@@ -28,14 +29,14 @@ router.get("/:id", (req, res) => {
 				if(post.username === req.user.username || req.user.admin === true)
 					res.render('update_post', { post: post,  user : req.user, csrfToken : req.csrfToken()});
 					else
-					res.render('error', {error : "Access is denied", user : req.user});
+					res.render('error', {error : "Access is denied", user : req.user, csrfToken : req.csrfToken()});
 			} else {
 				console.log(err);
-				res.render('error', {error: err, user : req.user});
+				res.render('error', {error: err, user : req.user, csrfToken : req.csrfToken()});
 			}
 		});
 	} else {
-		res.render('error', {error : "Access is denied", user : req.user});
+		res.render('error', {error : "Access is denied", user : req.user, csrfToken : req.csrfToken()});
 	}
 });
 
@@ -59,11 +60,11 @@ router.post("/:id", (req, res) => {
 							if(!err){
 								return user;
 							} else {
-								res.render('error', {error : '500. Server error', user: req.user});
+								res.render('error', {error : '500. Server error', user: req.user, csrfToken : req.csrfToken()});
 							}
 						});
 						let files = new Array();
-						let upload_path = nconf.get("upload_pathes:files") + req.user._id + '/';
+						let upload_path = "./public/user_files/" + req.user._id + '/';
 						for(var i = 0; i < req.files.files.length; i++){
 							let fileObject = req.files.files[i];
 							files[files.length] = {name : fileObject.name, path : '/user_files/'+  user_creator._id + '/' + fileObject.name };
@@ -77,20 +78,20 @@ router.post("/:id", (req, res) => {
 						} else {
 							console.log(err);
 							if(err.name == 'ValidationError') {
-											res.render('error', {error : '400. Validation error', user: req.user,});
+											res.render('error', {error : '400. Validation error', user: req.user, csrfToken : req.csrfToken()});
 									 } else {
-											res.render('error', {error : '500. Server error', user: req.user,});
+											res.render('error', {error : '500. Server error', user: req.user, csrfToken : req.csrfToken()});
 									 }
 						}
 					});
 				}
 					else
 					{
-						res.render('error', {error : "Access is denied", user : req.user});
+						res.render('error', {error : "Access is denied", user : req.user, csrfToken : req.csrfToken()});
 					}
 			} else {
 				console.log(err);
-				res.render('error', {error: err, user : req.user});
+				res.render('error', {error: err, user : req.user, csrfToken : req.csrfToken()});
 			}
 		});
 	} else {

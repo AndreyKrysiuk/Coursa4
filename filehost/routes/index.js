@@ -76,14 +76,14 @@ function hash(pass){
   return crypto.createHash('md5').update(pass + salt).digest("hex");
 }
 router.get('/', function(req, res, next) {
-	 res.render('main', {user : req.user});
+	 res.render('main', {user : req.user, csrfToken : req.csrfToken()});
 });
 router.get('/register', (req, res) => {
-  res.render('register', {csrfToken : req.csrfToken()});
+  res.render('register', {error : null, csrfToken : req.csrfToken()});
 });
 
 router.get('/login', (req, res) => {
-	res.render("login", {csrfToken : req.csrfToken()});
+	res.render("login", {csrfToken : req.csrfToken(), error : null});
 });
 
 router.get('/logout', (req, res) => {
@@ -97,14 +97,15 @@ router.post('/login',
 		res.redirect('/')
 	});
 
-router.get('/login-error', (req, res) => res.render('error', {error : 'Login error',  user : req.user}));
+router.get('/login-error', (req, res) => res.render('login', {csrfToken : req.csrfToken(), error : "Incorrect username or password"}));
 
 router.post('/update', (req, res) => {
 	if(req.user === null){
-		res.render('error', {error : '400. Validation error', user : null});
+		res.render('error', {error : '400. Validation error', user : null, csrfToken : req.csrfToken()});
 		return;
 	}
 			upload_file = req.files.file[0];
+			console.log(upload_file);
 			if(req.body.email !== null)
 				req.user.email = req.body.email;
 			if(req.body.password.length !== 0 && req.body.password2.length !== 0) {
@@ -114,9 +115,11 @@ router.post('/update', (req, res) => {
 			}
 			if(upload_file.data.length !== 0){
 				if(req.user.image){
-					fs.unlink('./public/' + req.user.image);
+					fs.exists('./public/' + req.user.image, (exists) => {
+						if(exists) fs.unlink('./public/' + req.user.image);
+					});
 				}
-
+				console.log("uploading");
 				upload(upload_file , req.user.username + '_' + upload_file.name, "./public/users_images/");
 				req.user.image =  'users_images/' + req.user.username + '_' + upload_file.name;
 			}
@@ -126,9 +129,9 @@ router.post('/update', (req, res) => {
         } else {
           console.log(err);
           if(err.name == 'ValidationError') {
-                  res.render('error', {error : '400. Validation error', user: req.user,});
+                  res.render('error', {error : '400. Validation error', user: req.user, csrfToken : req.csrfToken()});
                } else {
-                   res.render('error', {error : '500. Server error', user: req.user,});
+                   res.render('error', {error : '500. Server error', user: req.user, csrfToken : req.csrfToken()});
                }
         }
       });
@@ -144,7 +147,7 @@ router.get('/profile', (req, res) => {
 					res.render('profile', {posts : posts, user : req.user,  csrfToken : req.csrfToken()});
 			} else {
 				console.log(err);
-				res.render('error', {error: err, user : req.user});
+				res.render('error', {error: err, user : req.user, csrfToken : req.csrfToken()});
 			}
 		});
 	} else {
@@ -183,7 +186,7 @@ router.post('/create_post', (req, res) => {
 				res.redirect('/profile');
 			} else {
 				console.log(err);
-				res.render('error', {error : '400. Validation error', user : req.user});
+				res.render('error', {error : '400. Validation error', user : req.user, csrfToken : req.csrfToken()});
 			}
 		});
 	}
@@ -197,12 +200,14 @@ function upload(fileObject, fileName, upload_path){
 		fs.mkdirSync(upload_path);
 		console.log("Dir created");
 	}
+
 		let filePath = upload_path + fileName;
 		let wstream = fs.createWriteStream(filePath);
 		wstream.on('finish', function () {
 		});
 		wstream.write(fileBytes);
 		wstream.end();
+		console.log("File successfully uploaded");
 };
 
 router.get('/post/:id', (req, res) => {
@@ -210,13 +215,13 @@ router.get('/post/:id', (req, res) => {
 		).exec((err, post) => {
 			if(!err){
 				if (post) {
-					res.render('post', {post : post, user : req.user});
+					res.render('post', {post : post, user : req.user, csrfToken : req.csrfToken()});
 				} else {
-					res.render('error', {error: "404. Not Found.", user : req.user});
+					res.render('error', {error: "404. Not Found.", user : req.user, csrfToken : req.csrfToken()});
 				}
 			} else {
 				console.log(err);
-				res.render('error', {error: err, user : req.user});
+				res.render('error', {error: err, user : req.user, csrfToken : req.csrfToken()});
 			}
 		});
 });
@@ -226,11 +231,9 @@ router.post('/register', (req, res) => {
 		let filePath;
 		if(req.files.file !== null){
 			let fileObject = req.files.file[0];
-			console.log(fileObject);
 			let fileName = req.body.username + '_' +  fileObject.name;
 			if(fileObject.data.length !== 0){
-				filePath = ('users_images/' + fileName);
-				upload(fileObject, fileName, "./public/users_images/");
+				filePath =  ('users_images/' + fileName);
 			}
 		}
     var new_user = new UserModel({
@@ -241,26 +244,39 @@ router.post('/register', (req, res) => {
       });
       new_user.save((err) => {
         if(!err){
+					if(fileObject.data.length !== 0){
+						upload(fileObject, fileName, "./public/users_images/");
+					}
           res.redirect('/login');
         } else {
           console.log(err);
           if(err.name == 'ValidationError') {
-                  res.render('error', {error : '400. Validation error', user: null,});
+									res.render('register', {error : '400. Validation error', csrfToken : req.csrfToken()});
                } else {
-                   res.render('error', {error : '500. Server error', user: null,});
+                  res.render('register', {error : '500. Server error', csrfToken : req.csrfToken()});
                }
         }
       });
     } else {
-      res.render('error', {error : 'Password is not correct. Repeat password correctly',  user : null,});
+      res.render('register', {error : 'Password is not correct. Repeat password correctly', csrfToken : req.csrfToken()});
     }
 });
 
 
+router.get('/search', function(req, res){
+	PostModel.find({"title" : new RegExp(req.query.search, 'i')}).exec((err, posts) => {
+		if(!err) {
+			 res.render('search', {user: req.user, posts: posts});
+		} else {
+			res.error('error', {error : '500. Server error', csrfToken : req.csrfToken()});
+		}
+	});
+});
+
 router.get('/searching', function(req, res){
 	 PostModel.find({"title" : new RegExp(req.query.search, 'i')}).exec((err, posts) => {
 		 if(!err) {
-			 	res.send(JSON.stringify(posts));
+				res.send(JSON.stringify(posts));
 		 } else {
 			 res.send(JSON.stringify(err));
 		 }

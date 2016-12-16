@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap-filestyle.min.js"> </script>
   <link  href='/stylesheets/style.css' type="text/css" rel="stylesheet">
 </head>
 <body>
@@ -26,6 +27,17 @@
           <li><a href = '/files/Images'>Images</a></li>
           <li><a href = '/files/Software'>Software</a></li>
         </ul>
+          <form action='/search' method='GET' class="navbar-form navbar-left" id="search_form">
+          <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="Search" id="search" name="search">
+              <div class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="submit">
+                  <i class="glyphicon glyphicon-search"></i>
+                </button>
+              </div>
+            </div>
+            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+          </form>
         <ul class="nav navbar-nav navbar-right">
           <li><a href = '/register'><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
           <li><a href = '/login'><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
@@ -55,15 +67,22 @@
       </div>
       <div class="form-group has-feedback files ">
         <label class="control-label" for="file">Load Avatar:</label>
-        <input type="file" name="file" id="file">
+        <input type="file" class="filestyle" data-buttonBefore="true" name="file" id="file" accept="image/*">
       </div>
       <input type="hidden" name="_csrf" value="<%=csrfToken%>">
       <button type="submit" class="btn btn-primary">Sign Up</button>
-      <div class = "error-msg">
-
-      </div>
     </form>
+    <% if (error) { %>
+        <div class="alert alert-danger">
+          <strong>Error!</strong> <%=error%>
+        </div>
+        <script >
+        $('.alert').show(0).delay(5000).fadeOut('slow');
+        </script>
+        <% } %>
 	</div>
+
   <script src="/js/valid_reg.js"></script>
+  <script src="/js/valid_search.js"></script>
 </body>
 </html>

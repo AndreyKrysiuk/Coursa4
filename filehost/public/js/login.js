@@ -3,13 +3,13 @@ $(document).ready(function(){
   var validName = false;
   var validPass = false;
 
-  $("form").submit(function(event){
+  $("#login_form").submit(function(event){
     event.preventDefault();
 
     var name = $("#username").val();
     var password = $("#password").val();
 
-    if(name == "" || (name.length <= 6 && name.length >= 24)) {
+    if(name == "" ) {
       $("#username").parent().removeClass("has-success").addClass("has-error");
       $(".nameBlock").append("<span class='glyphicon glyphicon-remove form-control-feedback' aria-hidden='true'></span>");
       $(".nameBlock .glyphicon-ok").remove();

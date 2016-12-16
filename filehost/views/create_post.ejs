@@ -8,11 +8,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/i18n/defaults-*.min.js"></script>
-
+    <script type="text/javascript" src="js/bootstrap-filestyle.min.js"> </script>
     <link  href='/stylesheets/style.css' type="text/css" rel="stylesheet">
 </head>
 <body>
@@ -31,6 +30,17 @@
           <li><a href = '/files/Images'>Images</a></li>
           <li><a href = '/files/Software'>Software</a></li>
         </ul>
+          <form action='/search' method='GET' class="navbar-form navbar-left" id="search_form">
+          <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="Search" id="search" name="search">
+              <div class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="submit">
+                  <i class="glyphicon glyphicon-search"></i>
+                </button>
+              </div>
+            </div>
+            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+          </form>
         <ul class="nav navbar-nav navbar-right">
           <li><a href = '/logout'><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
           <li><a href = '/profile'><span class="glyphicon glyphicon-user"></span> Profile</a></li>
@@ -40,7 +50,7 @@
   </header>
   	<div class='container'>
   		<h1>Create your post</h1>
-      <form action='/create_post' method='POST' enctype="multipart/form-data">
+      <form action='/create_post' method='POST' enctype="multipart/form-data" id="post_form">
         <div class="form-group has-feedback title">
           <label for="title">Title:</label>
           <input type="text" class="form-control" name="title" id="title" aria-describedby="inputSuccess2Status">
@@ -50,7 +60,7 @@
           <textarea type="text" class="form-control" name="description" id="description" aria-describedby="inputSuccess2Status"></textarea>
         </div>
         <div class="form-group has-feedback ">
-        <label for="cathegory">Cathegory:</label>
+          <label for="cathegory">Cathegory:</label>
         <br />
         <select id="cathegory" name = "cathegory" class="selectpicker" title="Choose one of the following...">
           <option value="Games">Games</option>
@@ -61,14 +71,16 @@
           <option value="Text">Text</option>
         </select>
       </div>
-        <div class="form-group">
-          <label for="files">Load your files:</label>
-          <input type="file" name="files" id="files" multiple="multiple">
+          <div class="form-group has-feedback files ">
+            <label class="control-label" for="files">Load your files:</label>
+            <input type="file" class="filestyle" data-buttonBefore="true" name="files" id="files" multiple="multiple">
         </div>
         <input type="hidden" name="_csrf" value="<%=csrfToken%>">
         <button type="submit" class="btn btn-primary">Create</button>
       </form>
   	</div>
+    <script src="/js/main.js"></script>
     <script src="/js/valid_post.js"></script>
+    <script src="/js/valid_search.js"></script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+<!doctype html>
 
 <html lang="en">
 <head>
@@ -29,6 +30,18 @@
           <li><a href = '/files/Images'>Images</a></li>
           <li><a href = '/files/Software'>Software</a></li>
         </ul>
+          <form action='/search' method='GET' class="navbar-form navbar-left" id="search_form">
+          <div class="input-group">
+            <input type="text" class="form-control input-sm" placeholder="Search" id="search" name="search">
+              <div class="input-group-btn">
+                <button class="btn btn-default btn-sm" type="submit">
+                  <i class="glyphicon glyphicon-search"></i>
+                </button>
+              </div>
+            </div>
+            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+          </form>
+
         <ul class="nav navbar-nav navbar-right">
           <% if (!user) { %>
                         <li><a href = '/register'><span class="glyphicon glyphicon-user"></span> Sign in</a></li>
@@ -61,5 +74,7 @@
               <% } %>
               <% } %>
   </div>
+  <script src="/js/main.js"></script>
+  <script src="/js/valid_search.js"></script>
 </body>
 </html>

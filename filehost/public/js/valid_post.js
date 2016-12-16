@@ -5,7 +5,7 @@ $(document).ready(function(){
   var validSelector = false;
   var validFiles = false;
 
-  $("form").submit(function(event){
+  $("#post_form").submit(function(event){
     event.preventDefault();
 
     var title = $("#title").val();
@@ -52,7 +52,7 @@ $(document).ready(function(){
 
 
     if(validTitle == true && validDescr == true && validSelector == true && validFiles) {
-      $("form").unbind('submit').submit();
+      $("#post_form").unbind('submit').submit();
     }
 
   });

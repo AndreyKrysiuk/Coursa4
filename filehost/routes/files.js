@@ -11,10 +11,10 @@ router.get("/:cathegory", (req, res) => {
 	}).exec((err, posts) => {
 		if(!err){
 			  console.log(posts);
-				res.render('cathegory', {title : req.params.cathegory, posts: posts,  user : req.user});
+				res.render('cathegory', {title : req.params.cathegory, posts: posts,  user : req.user, csrfToken : req.csrfToken()});
 		} else {
 			console.log(err);
-			res.render('error', {error: err, user : req.user});
+			res.render('error', {error: err, user : req.user, csrfToken : req.csrfToken()});
 		}
 	});
 });
